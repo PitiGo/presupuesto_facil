@@ -1,0 +1,15 @@
+/* src/components/Footer.css */
+
+.app-footer {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+  border-top: 1px solid #dee2e6;
+}
+
+.app-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}

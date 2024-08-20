@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "healthywalletmobile",
+  "private_key_id": "b5d41a790c1578bf3de2635c2771f71540e327d4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCsA4mRtHx2+QYB\nsuTWJcc0Hj+WZh5N6DxR4dO+TwauzySpG9BsMIUt21AtXwpuIiNtlNz6XieOcuSZ\nBQP45VhF3Di4lbh1j3J/KRVDbmnaPveH21oX+hErrJCRI1ncvrdmtYN5bLNWMFWN\ndzGoCYW+H8E1+yLG5JFXccXpzIidVK0rhoaYE4V0yusWuq4tnqe3HeUvuNcU2jlE\nLqiKGw1F7w/8f2GtkRCFokA+ZdqC47yvFUyMWom5LB6QF55vl93N9aPJsA8jtuSC\nLaDcqy0oEsMqOovqRCsRtbIXXHI6CCa2/7U6G2Tp81oL7HC4fptDcmex7vGP2fyy\nuHKAOLexAgMBAAECggEABSWh8yssYj73UAuzTzkYKdYR3wU1OO2PCIAyXspsj8SA\n+1JqvSICiim6z3C9ligNWVUP+6nfkyKa9n0w7jymlIiPZe6M82+UZHutODRQlIg3\nzefhXUBNTTo/pSgiozlNsZQS2ApJn3WYyb/cS4PlbZfzpxLZqoviUXSFEIbfO53l\ncGjmPGk3oUDhFpi1GMbR6M5bd13D1LHLKGurz0BK+BzTUxOlWZKQoWsvv53RY5X6\njkBmAjTHTPT4N0XHNflLOenjUHkg7/gYFWMPqw36Wu6YP4ppZo/K/meQzUsVojJF\n/03IKAPBNVnqX9lnDtSm9e+HZK5R16MeOw2H9GkTlQKBgQDePCNTm2ZzhRm13s2C\nBSFHXcRkU/juPfeOCotGvhFq33HXHuSJDLBa8pw876V0QTlkozL+/1NZQ29oyChA\npXGPE4BEVlBUl5wWXutg3Jvf70+/yblXtQHzoI0iezdGjenBgYvIATXWAcwdiuxA\nNA82G5IK+83DxVfhPgav0gzhIwKBgQDGJgq8R8+oyR1it38IMeZgRG1w98lp45ju\nCVvQHkScu+SOpZrKXtUx2xvKzpzCf+M+TIKUOko5PbKisJFw4bZnX9hL88XkcI4z\nYNuA3cXAPoMnIPku2/Cu/v0P9GisF7NSmJDZA6VM96wJfcQmkL6IdPcIvkLKlP1c\nDbmXm6EzGwKBgBMM8LJQFf49ILEYgmFs8yddAGLhV+uEYF5KxRmxXWjd8rJQMaMV\n9WA2f/IxUOugU70uyEZXuNtkDn7a+ahhBlUPhOVWyNgXjwfT5zWMc8hEiX+VWVAN\ncjdiQfb8vQZNUAaIhmUExYqs6MR3jj0KuWsX/fL3FvJ7Tkc+u/ACf5wlAoGBAKZe\ndpETcmXzRrsF+qD01MtraMB7LB++Oz9RmEcrwswebo7euRLFgRe1Mqabx77/Bdve\n/ZxbPMrG5N/4hIVU3oP5U3CiIzvkzWCSKHsQueLqGdCWvOH9RR6Jdg0ZV3F3DNeC\nxcuQZhAzu7zUXgdLbM7B9lDe/tF9OyU5WOTUhQqVAoGAFvzdi+0+rHwbAioynk3O\nQiPZzm0w25H2bzsx7ujVgPXnpczmcZ/IkByXoNfa0rA3lr5xSypQAa6YNNEpgpw0\nQUTyya8Br2klohM9evcd9GdDBkJIEdOEYFhy6L4v21YsjUsNxk/+JRJqmdH5lGEY\n9M63C+Ne0UqyHQleGnp0Kyg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-40603@healthywalletmobile.iam.gserviceaccount.com",
+  "client_id": "116046007043932895210",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-40603%40healthywalletmobile.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

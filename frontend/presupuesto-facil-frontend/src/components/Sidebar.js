@@ -1,30 +1,39 @@
 // src/components/Sidebar.js
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Sidebar.css';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+function Sidebar() {
+  const [isOpen, setIsOpen] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const toggleSidebar = () => {
+  const toggleOpen = () => {
     setIsOpen(!isOpen);
+    setIsCollapsed(false);
+  };
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+    setIsOpen(true);
   };
 
   return (
     <>
-      <button className="sidebar-toggle" onClick={toggleSidebar}>
-        ☰
+      <button className="sidebar-toggle" onClick={toggleOpen}>
+        {isOpen ? '×' : '☰'}
       </button>
-      <nav className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <ul>
-          <li><a href="#dashboard">Dashboard</a></li>
-          <li><a href="#presupuestos">Presupuestos</a></li>
-          <li><a href="#transacciones">Transacciones</a></li>
-          <li><a href="#metas">Metas</a></li>
-          <li><a href="#estadisticas">Estadísticas</a></li>
-        </ul>
-      </nav>
+      <div className={`sidebar ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
+        <nav>
+          <ul>
+            <li><Link to="/dashboard">Dashboard</Link></li>
+            <li><Link to="/transactions">Transacciones</Link></li>
+            <li><Link to="/budget">Presupuesto</Link></li>
+            {/* Añade más enlaces según sea necesario */}
+          </ul>
+        </nav>
+      </div>
     </>
   );
-};
+}
 
 export default Sidebar;

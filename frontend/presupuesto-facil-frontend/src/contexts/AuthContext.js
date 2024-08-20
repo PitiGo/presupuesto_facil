@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   register,
@@ -24,12 +23,10 @@ export function AuthProvider({ children }) {
       setCurrentUser(user);
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
-  // Utilizamos las funciones directamente desde services/auth.js
- const value = {
+  const value = {
     currentUser,
     signUp: register,
     signIn: login,
@@ -44,3 +41,4 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+

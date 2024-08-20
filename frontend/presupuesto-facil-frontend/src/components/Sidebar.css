@@ -1,19 +1,22 @@
-/* src/components/Sidebar.css */
-
 .sidebar {
   width: 250px;
-  background-color: #f8f9fa;
   height: 100%;
+  background-color: #f8f9fa;
   position: fixed;
-  left: -250px;
+  left: -250px; /* Inicialmente oculto */
   top: 0;
-  transition: left 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   z-index: 1000;
   padding-top: 60px; /* Espacio para el header */
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar.open {
+  left: 0;
+}
+
+.sidebar.collapsed {
+  width: 50px;
   left: 0;
 }
 
@@ -37,10 +40,18 @@
   color: #343a40;
   text-decoration: none;
   transition: background-color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar li a:hover {
   background-color: #e9ecef;
+}
+
+.sidebar.collapsed li a {
+  text-align: center;
+  padding: 15px 5px;
 }
 
 .sidebar-toggle {
@@ -59,4 +70,14 @@
 
 .sidebar-toggle:hover {
   color: #0056b3;
+}
+
+/* Ajuste para cuando el sidebar está colapsado */
+.sidebar.collapsed + .content {
+  margin-left: 50px;
+}
+
+/* Ajuste para cuando el sidebar está abierto */
+.sidebar.open + .content {
+  margin-left: 250px;
 }

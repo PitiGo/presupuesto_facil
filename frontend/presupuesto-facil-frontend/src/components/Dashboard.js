@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import Accounts from './Accounts';
 import './Dashboard.css';
 
 function Dashboard({ isSidebarCollapsed }) {
@@ -30,7 +31,9 @@ function Dashboard({ isSidebarCollapsed }) {
               <h2>Últimas Transacciones</h2>
               {/* Lista de últimas transacciones */}
             </div>
-            {/* Más secciones según sea necesario */}
+            <div className="dashboard-section">
+              <Accounts />
+            </div>
           </div>
         )}
       </div>

@@ -76,4 +76,32 @@ export const checkUser = async (email, googleId = null) => {
   }
 };
 
-// Puedes agregar más funciones de API aquí según sea necesario
+// Función para obtener la URL de autenticación de Truelayer
+export const getTruelayerAuthUrl = async () => {
+  try {
+    const response = await api.post('/connect-truelayer');
+    return response.data.auth_url;
+  } catch (error) {
+    handleApiError(error, 'Failed to get Truelayer authentication URL');
+  }
+};
+
+// Función para procesar el callback de Truelayer
+export const processTruelayerCallback = async (code) => {
+  try {
+    const response = await api.get('/callback', { params: { code } });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to process Truelayer callback');
+  }
+};
+
+// Función para obtener las cuentas del usuario
+export const getUserAccounts = async () => {
+  try {
+    const response = await api.get('/accounts');
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to get user accounts');
+  }
+};

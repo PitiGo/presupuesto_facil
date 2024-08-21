@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import Accounts from './components/Accounts';
 import './App.css';
 
 // Componente de envoltura para rutas protegidas
@@ -20,13 +21,18 @@ const ProtectedRoute = ({ children }) => {
 
 function AppContent() {
   const { currentUser } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   return (
     <div className="App">
       <Header />
       <div className="main-container">
-        {currentUser && <Sidebar />}
-        <main className={`content ${currentUser ? 'with-sidebar' : ''}`}>
+        {currentUser && <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}
+        <main className={`content ${currentUser ? 'with-sidebar' : ''} ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/signup" element={<Signup />} />
@@ -34,6 +40,11 @@ function AppContent() {
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/accounts" element={
+              <ProtectedRoute>
+                <Accounts />
               </ProtectedRoute>
             } />
             {/* Puedes añadir más rutas protegidas aquí */}

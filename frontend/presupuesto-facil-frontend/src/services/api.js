@@ -80,9 +80,14 @@ export const checkUser = async (email, googleId = null) => {
 export const getTruelayerAuthUrl = async () => {
   try {
     const response = await api.post('/connect-truelayer');
-    return response.data.auth_url;
+    if (response.data && response.data.auth_url) {
+      return response.data;
+    } else {
+      throw new Error('La respuesta no contiene una URL de autenticación válida');
+    }
   } catch (error) {
-    handleApiError(error, 'Failed to get Truelayer authentication URL');
+    console.error('Error getting Truelayer auth URL:', error);
+    throw new Error('Failed to get Truelayer authentication URL: ' + (error.response?.data?.detail || error.message));
   }
 };
 

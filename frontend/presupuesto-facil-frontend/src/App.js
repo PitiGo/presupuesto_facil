@@ -47,6 +47,11 @@ function AppContent() {
                 <Accounts />
               </ProtectedRoute>
             } />
+            <Route path="/truelayer-callback" element={
+              <ProtectedRoute>
+                <Accounts />
+              </ProtectedRoute>
+            } />
             {/* Puedes añadir más rutas protegidas aquí */}
           </Routes>
         </main>

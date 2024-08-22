@@ -16,4 +16,4 @@ class Account(AccountBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Esta es la nueva forma de configurar orm_mode en Pydantic v2

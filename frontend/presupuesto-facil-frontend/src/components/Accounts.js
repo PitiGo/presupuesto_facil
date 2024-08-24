@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserAccounts, getTruelayerAuthUrl, processTruelayerCallback } from '../services/api';
 import './Accounts.css';
@@ -10,37 +9,20 @@ const Accounts = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const { currentUser } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleInitialLoad = async () => {
-      const searchParams = new URLSearchParams(location.search);
-      const code = searchParams.get('code');
-      if (code) {
-        await handleTruelayerCallback(code);
-      } else {
-        await fetchAccounts();
-      }
-    };
-
-    handleInitialLoad();
-  }, [location]);
+    fetchAccounts();
+  }, []);
 
   const fetchAccounts = async () => {
     try {
       setLoading(true);
       const accountsData = await getUserAccounts();
       setAccounts(accountsData);
-      setError(''); // Limpiar cualquier error previo
+      setError('');
     } catch (err) {
       console.error('Error fetching accounts:', err);
-      if (err.response && err.response.status === 401) {
-        setError('Sesión expirada. Por favor, inicie sesión nuevamente.');
-        // Aquí podrías redirigir al usuario a la página de login si es necesario
-      } else {
-        setError('No se pudieron cargar las cuentas. Por favor, inténtelo de nuevo más tarde.');
-      }
+      setError('No se pudieron cargar las cuentas. Por favor, inténtelo de nuevo más tarde.');
     } finally {
       setLoading(false);
     }
@@ -57,33 +39,6 @@ const Accounts = () => {
     } catch (err) {
       console.error('Error connecting to Truelayer:', err);
       setError('No se pudo conectar con Truelayer. Por favor, inténtelo de nuevo.');
-    }
-  };
-
-  const handleTruelayerCallback = async (code) => {
-    try {
-      setLoading(true);
-      await processTruelayerCallback(code);
-      await fetchAccounts();
-      navigate('/accounts', { replace: true });
-      setSuccessMessage('Cuentas conectadas exitosamente');
-      setTimeout(() => setSuccessMessage(''), 5000); // Limpiar el mensaje después de 5 segundos
-      setError(''); // Limpiar cualquier error previo
-    } catch (err) {
-      console.error('Error processing Truelayer callback:', err);
-      if (err.response && err.response.status === 400) {
-        if (err.response.data.detail.includes("El código de autorización ha expirado")) {
-          setError("La conexión con Truelayer ha expirado. Por favor, intente conectar su cuenta nuevamente.");
-        } else if (err.response.data.detail.includes("invalid_grant")) {
-          setError("El código de autorización ya ha sido utilizado. Por favor, intente conectar su cuenta nuevamente.");
-        } else {
-          setError('Error al procesar la conexión con Truelayer: ' + err.response.data.detail);
-        }
-      } else {
-        setError('Error inesperado al procesar la conexión con Truelayer. Por favor, inténtelo de nuevo.');
-      }
-    } finally {
-      setLoading(false);
     }
   };
 

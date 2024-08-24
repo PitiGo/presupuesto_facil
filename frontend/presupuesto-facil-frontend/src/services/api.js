@@ -18,7 +18,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
-    console.log('Token being sent:', token); // Add this line for debugging
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -108,5 +107,32 @@ export const getUserAccounts = async () => {
     return response.data;
   } catch (error) {
     handleApiError(error, 'Failed to get user accounts');
+  }
+};
+
+export const getUserTransactions = async (accountId) => {
+  try {
+    const response = await api.get(`/accounts/${accountId}/transactions`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to get user transactions');
+  }
+};
+
+export const syncUserTransactions = async (accountId) => {
+  try {
+    const response = await api.post(`/accounts/${accountId}/sync-transactions`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to sync user transactions');
+  }
+};
+
+export const updateTransaction = async (transactionId, updatedData) => {
+  try {
+    const response = await api.put(`/transactions/${transactionId}`, updatedData);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to update transaction');
   }
 };

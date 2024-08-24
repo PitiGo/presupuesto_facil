@@ -16,7 +16,12 @@ function Sidebar({ isOpen, toggleSidebar }) {
         </li>
         <li>
           <Link to="/accounts">
-            {isOpen ? 'Accounts' : 'A'}
+            {isOpen ? 'Cuentas' : 'C'}
+          </Link>
+        </li>
+        <li>
+          <Link to="/transactions">
+            {isOpen ? 'Transacciones' : 'T'}
           </Link>
         </li>
         {/* Otros enlaces del sidebar */}

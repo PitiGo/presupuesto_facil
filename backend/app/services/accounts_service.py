@@ -1,11 +1,15 @@
+import pytz
 from sqlalchemy.orm import Session
 from app.models.account import AccountModel
+from app.schemas.transaction import TransactionCreate
+from app.models.transaction import TransactionModel
 from app.schemas.account import AccountCreate, Account
 from fastapi import HTTPException
 import httpx
 from datetime import datetime, timedelta
 import logging
 from typing import List
+import asyncio
 
 # Configuraciones de Truelayer
 TRUELAYER_CLIENT_ID = "sandbox-dividendtree-757325"
@@ -69,9 +73,17 @@ def get_truelayer_auth_url() -> str:
            f"&redirect_uri={TRUELAYER_REDIRECT_URI}&scope={scopes}&providers={providers}")
     return url
 
+used_auth_codes = set()
+code_lock = asyncio.Lock()
+
 async def exchange_truelayer_code(code: str, user_id: str):
     if not code:
         raise HTTPException(status_code=422, detail="Authorization code is required")
+
+    async with code_lock:
+        if code in used_auth_codes:
+            raise HTTPException(status_code=400, detail="El código de autorización ya ha sido utilizado.")
+        used_auth_codes.add(code)
 
     payload = {
         'grant_type': 'authorization_code',
@@ -111,6 +123,8 @@ async def exchange_truelayer_code(code: str, user_id: str):
     else:
         logger.error(f"Token exchange failed. Status: {response.status_code}, Response: {response.text}")
         raise HTTPException(status_code=response.status_code, detail=f"Failed to get tokens from TrueLayer: {response.text}")
+
+
 
 async def get_truelayer_accounts(user_id: str):
     access_token = await token_manager.get_valid_access_token(user_id)
@@ -201,3 +215,68 @@ def create_or_update_account(db: Session, account: AccountCreate) -> AccountMode
     db.commit()
     db.refresh(existing_account)
     return existing_account
+
+async def get_truelayer_transactions(user_id: str, account_id: str):
+    access_token = await token_manager.get_valid_access_token(user_id)
+    if not access_token:
+        raise HTTPException(status_code=401, detail="No valid access token found")
+
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/json"
+    }
+
+    # Obtener transacciones de los últimos 90 días
+    from_date = (datetime.now(pytz.UTC) - timedelta(days=90)).strftime("%Y-%m-%d")
+    to_date = datetime.now(pytz.UTC).strftime("%Y-%m-%d")
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{TRUELAYER_API_URL}/data/v1/accounts/{account_id}/transactions",
+            headers=headers,
+            params={"from": from_date, "to": to_date}
+        )
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        logger.error(f"Failed to fetch transactions. Status: {response.status_code}, Response: {response.text}")
+        raise HTTPException(status_code=response.status_code, detail=f"Failed to fetch transactions from TrueLayer: {response.text}")
+
+def create_or_update_transaction(db: Session, transaction: TransactionCreate) -> TransactionModel:
+    existing_transaction = db.query(TransactionModel).filter(TransactionModel.transaction_id == transaction.transaction_id).first()
+    
+    if existing_transaction:
+        for key, value in transaction.dict().items():
+            setattr(existing_transaction, key, value)
+    else:
+        existing_transaction = TransactionModel(**transaction.dict())
+        db.add(existing_transaction)
+    
+    db.commit()
+    db.refresh(existing_transaction)
+    return existing_transaction
+
+async def sync_account_transactions(db: Session, user_id: str, account_id: str):
+    transactions_data = await get_truelayer_transactions(user_id, account_id)
+    
+    synced_transactions = []
+    for transaction in transactions_data.get('results', []):
+        transaction_data = TransactionCreate(
+            account_id=account_id,
+            transaction_id=transaction['transaction_id'],
+            amount=transaction['amount'],
+            currency=transaction['currency'],
+            description=transaction.get('description', ''),
+            transaction_type=transaction.get('transaction_type', 'Unknown'),
+            transaction_category=transaction.get('transaction_category', 'Uncategorized'),
+            timestamp=datetime.fromisoformat(transaction['timestamp'])
+        )
+        
+        db_transaction = create_or_update_transaction(db, transaction_data)
+        synced_transactions.append(db_transaction)
+    
+    return synced_transactions
+
+def get_account_transactions(db: Session, account_id: str):
+    return db.query(TransactionModel).filter(TransactionModel.account_id == account_id).all()

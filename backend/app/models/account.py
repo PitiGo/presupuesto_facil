@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from app.database import Base
+from sqlalchemy.orm import relationship
 
 class AccountModel(Base):
     __tablename__ = "accounts"
@@ -12,3 +13,4 @@ class AccountModel(Base):
     balance = Column(Float)
     currency = Column(String)
     institution_name = Column(String)
+    transactions = relationship("TransactionModel", back_populates="account")

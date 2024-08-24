@@ -12,4 +12,4 @@ class User(UserBase):
     firebase_uid: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

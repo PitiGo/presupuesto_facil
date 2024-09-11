@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from app.database import Base
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from ..database import Base
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 class AccountModel(Base):
     __tablename__ = "accounts"
@@ -13,4 +14,5 @@ class AccountModel(Base):
     balance = Column(Float)
     currency = Column(String)
     institution_name = Column(String)
+    created_at = Column(DateTime, default=datetime.now)
     transactions = relationship("TransactionModel", back_populates="account")

@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Accounts from './Accounts';
-import AllTransactions from './AllTransactions';
+import RecentTransactions from './RecentTransactions';
+import { getUserAccounts } from '../services/api';
 import './Dashboard.css';
 
 function Dashboard({ isSidebarCollapsed }) {
   const { currentUser } = useAuth();
+  const [accounts, setAccounts] = useState([]);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchAccounts();
+    }
+  }, [currentUser]);
+
+  const fetchAccounts = async () => {
+    try {
+      const fetchedAccounts = await getUserAccounts();
+      setAccounts(fetchedAccounts);
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+    }
+  };
 
   return (
     <div className={`dashboard ${isSidebarCollapsed ? 'dashboard-collapsed' : ''}`}>
@@ -30,11 +47,11 @@ function Dashboard({ isSidebarCollapsed }) {
             </div>
             <div className="dashboard-section">
               <h2>Cuentas</h2>
-              <Accounts />
+              <Accounts accounts={accounts} onSync={fetchAccounts} />
             </div>
             <div className="dashboard-section">
               <h2>Transacciones Recientes</h2>
-              <AllTransactions limit={2} />
+              <RecentTransactions limit={2} accounts={accounts} />
             </div>
           </div>
         )}

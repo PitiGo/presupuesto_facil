@@ -3,6 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth,accounts  # Cambiado a importación relativa
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -21,6 +25,22 @@ app.add_middleware(
 # Incluir routers
 app.include_router(auth.router)
 app.include_router(accounts.router)
+
+# Configuración del logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
+# Configurar el logger para tu aplicación
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# Asegúrate de que los loggers de tus módulos también estén configurados
+logging.getLogger('app.services.accounts_service').setLevel(logging.DEBUG)
+logging.getLogger('app.routers.accounts').setLevel(logging.DEBUG)
+
 
 @app.get("/")
 async def root():

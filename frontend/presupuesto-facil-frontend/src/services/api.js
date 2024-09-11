@@ -91,12 +91,34 @@ export const getTruelayerAuthUrl = async () => {
 };
 
 // Función para procesar el callback de Truelayer
-export const processTruelayerCallback = async (code) => {
+export const processTruelayerCallback = async (code, state) => {
   try {
-    const response = await api.get('/callback', { params: { code } });
+    console.log("Iniciando processTruelayerCallback");
+    console.log(`Código recibido: ${code}`);
+    console.log(`State recibido: ${state}`);
+
+    if (!code) {
+      throw new Error('No se recibió código de autorización');
+    }
+
+    const response = await api.get('/callback', { 
+      params: { 
+        code,
+        state // Incluimos el state en la solicitud
+      }
+    });
+
+    console.log("Respuesta del servidor:", response.data);
+
+    if (response.data && response.data.accounts) {
+      console.log(`Cuentas procesadas: ${response.data.accounts.length}`);
+    }
+
     return response.data;
   } catch (error) {
+    console.error('Error en processTruelayerCallback:', error);
     handleApiError(error, 'Failed to process Truelayer callback');
+    throw error; // Re-lanzamos el error para que pueda ser manejado por el componente
   }
 };
 
@@ -107,6 +129,15 @@ export const getUserAccounts = async () => {
     return response.data;
   } catch (error) {
     handleApiError(error, 'Failed to get user accounts');
+  }
+};
+
+export const syncUserAccounts = async () => {
+  try {
+    const response = await api.post('/accounts/sync');
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to sync user accounts');
   }
 };
 

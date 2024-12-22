@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..services import accounts_service
@@ -10,17 +9,14 @@ from ..schemas.transaction import Transaction
 from typing import List
 from fastapi.responses import JSONResponse
 import logging
+
 router = APIRouter()
-security = HTTPBearer()
 logger = logging.getLogger(__name__)
 
 @router.post("/connect-truelayer", response_model=dict)
-async def connect_truelayer(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
-    firebase_user = get_current_user(credentials.credentials)
-    auth_url = accounts_service.get_truelayer_auth_url(firebase_user['uid'])
+async def connect_truelayer(current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    auth_url = accounts_service.get_truelayer_auth_url(current_user['uid'])
     return {"auth_url": auth_url}
-
-
 
 @router.get("/callback")
 async def truelayer_callback(code: str, state: str, db: Session = Depends(get_db)):
@@ -47,18 +43,13 @@ async def truelayer_callback(code: str, state: str, db: Session = Depends(get_db
         logger.error(f"Unexpected error in truelayer_callback: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
-
 @router.get("/accounts", response_model=List[Account])
-async def get_accounts(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
+async def get_accounts(current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
-        firebase_user = get_current_user(credentials.credentials)
-        logger.info(f"Fetching accounts for user: {firebase_user['uid']}")
-        accounts = accounts_service.get_user_accounts_from_db(db, firebase_user['uid'])
-        logger.info(f"Found {len(accounts)} accounts for user: {firebase_user['uid']}")
+        logger.info(f"Fetching accounts for user: {current_user['uid']}")
+        accounts = accounts_service.get_user_accounts_from_db(db, current_user['uid'])
+        logger.info(f"Found {len(accounts)} accounts for user: {current_user['uid']}")
         return accounts
-    except HTTPException as http_ex:
-        logger.error(f"HTTP exception in get_accounts: {http_ex.detail}")
-        raise http_ex
     except Exception as e:
         logger.error(f"Unexpected error in get_accounts: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="An error occurred while fetching accounts")
@@ -66,11 +57,10 @@ async def get_accounts(credentials: HTTPAuthorizationCredentials = Depends(secur
 @router.get("/accounts/{account_id}/transactions", response_model=List[Transaction])
 async def get_account_transactions(
     account_id: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    firebase_user = get_current_user(credentials.credentials)
-    account = db.query(AccountModel).filter(AccountModel.account_id == account_id, AccountModel.user_id == firebase_user['uid']).first()
+    account = db.query(AccountModel).filter(AccountModel.account_id == account_id, AccountModel.user_id == current_user['uid']).first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     
@@ -79,14 +69,13 @@ async def get_account_transactions(
 
 @router.post("/accounts/sync", response_model=List[Account])
 async def sync_accounts(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     try:
-        firebase_user = get_current_user(credentials.credentials)
-        logger.info(f"Syncing accounts for user: {firebase_user['uid']}")
-        synced_accounts = await accounts_service.sync_user_accounts(firebase_user['uid'], db)
-        logger.info(f"Synced {len(synced_accounts)} accounts for user: {firebase_user['uid']}")
+        logger.info(f"Syncing accounts for user: {current_user['uid']}")
+        synced_accounts = await accounts_service.sync_user_accounts(current_user['uid'], db)
+        logger.info(f"Synced {len(synced_accounts)} accounts for user: {current_user['uid']}")
         return synced_accounts
     except Exception as e:
         logger.error(f"Error syncing accounts: {str(e)}", exc_info=True)
@@ -95,13 +84,12 @@ async def sync_accounts(
 @router.post("/accounts/{account_id}/sync-transactions", response_model=dict)
 async def sync_account_transactions(
     account_id: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    firebase_user = get_current_user(credentials.credentials)
-    account = db.query(AccountModel).filter(AccountModel.account_id == account_id, AccountModel.user_id == firebase_user['uid']).first()
+    account = db.query(AccountModel).filter(AccountModel.account_id == account_id, AccountModel.user_id == current_user['uid']).first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     
-    synced_transactions = await accounts_service.sync_account_transactions(db, firebase_user['uid'], account_id)
+    synced_transactions = await accounts_service.sync_account_transactions(db, current_user['uid'], account_id)
     return {"message": "Transactions synced successfully", "count": len(synced_transactions)}

@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import TransactionsTable from './components/TransactionsTable';
 import Accounts from './components/Accounts';
+import BudgetManagement from './components/BudgetManagement';
 import './App.css';
 
 // Componente de envoltura para rutas protegidas
@@ -53,9 +54,14 @@ function AppContent() {
                 <Accounts />
               </ProtectedRoute>
             } />
-             <Route path="/transactions" element={
+            <Route path="/transactions" element={
               <ProtectedRoute>
                 <TransactionsTable />
+              </ProtectedRoute>
+            } />
+            <Route path="/budget-management" element={
+              <ProtectedRoute>
+                <BudgetManagement />
               </ProtectedRoute>
             } />
           </Routes>

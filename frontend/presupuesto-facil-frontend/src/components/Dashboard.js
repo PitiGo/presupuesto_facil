@@ -2,25 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Accounts from './Accounts';
 import RecentTransactions from './RecentTransactions';
-import { getUserAccounts } from '../services/api';
+import BudgetManagement from './BudgetManagement';
+import { getUserAccounts, getCategories, getBudgets, getCategoryGroups } from '../services/api';
 import './Dashboard.css';
 
 function Dashboard({ isSidebarCollapsed }) {
   const { currentUser } = useAuth();
   const [accounts, setAccounts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [budgets, setBudgets] = useState([]);
+  const [categoryGroups, setCategoryGroups] = useState([]);
 
   useEffect(() => {
     if (currentUser) {
-      fetchAccounts();
+      fetchData();
     }
   }, [currentUser]);
 
-  const fetchAccounts = async () => {
+  const fetchData = async () => {
     try {
-      const fetchedAccounts = await getUserAccounts();
+      const [fetchedAccounts, fetchedCategories, fetchedBudgets, fetchedCategoryGroups] = await Promise.all([
+        getUserAccounts(),
+        getCategories(),
+        getBudgets(),
+        getCategoryGroups()
+      ]);
       setAccounts(fetchedAccounts);
+      setCategories(fetchedCategories);
+      setBudgets(fetchedBudgets);
+      setCategoryGroups(fetchedCategoryGroups);
     } catch (error) {
-      console.error('Error fetching accounts:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -38,16 +50,16 @@ function Dashboard({ isSidebarCollapsed }) {
         {currentUser && (
           <div className="dashboard-grid">
             <div className="dashboard-section">
-              <h2>Resumen de Gastos</h2>
-              {/* Contenido del resumen de gastos */}
-            </div>
-            <div className="dashboard-section">
-              <h2>Presupuesto Mensual</h2>
-              {/* Contenido del presupuesto mensual */}
+              <BudgetManagement
+                categories={categories}
+                groups={categoryGroups}
+                budgets={budgets}
+                onDataChanged={fetchData}
+              />
             </div>
             <div className="dashboard-section">
               <h2>Cuentas</h2>
-              <Accounts accounts={accounts} onSync={fetchAccounts} />
+              <Accounts accounts={accounts} onSync={fetchData} />
             </div>
             <div className="dashboard-section">
               <h2>Transacciones Recientes</h2>

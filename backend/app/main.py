@@ -1,8 +1,7 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth,accounts  # Cambiado a importación relativa
-
+from .routers import auth,accounts,budgets 
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -25,6 +24,8 @@ app.add_middleware(
 # Incluir routers
 app.include_router(auth.router)
 app.include_router(accounts.router)
+app.include_router(budgets.router) 
+
 
 # Configuración del logging
 logging.basicConfig(

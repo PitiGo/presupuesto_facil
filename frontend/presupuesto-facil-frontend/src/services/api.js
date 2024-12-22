@@ -161,9 +161,144 @@ export const syncUserTransactions = async (accountId) => {
 
 export const updateTransaction = async (transactionId, updatedData) => {
   try {
+    console.log('Sending update request:', updatedData);
     const response = await api.put(`/transactions/${transactionId}`, updatedData);
     return response.data;
   } catch (error) {
     handleApiError(error, 'Failed to update transaction');
+  }
+};
+
+
+// Añade estas nuevas funciones al final del archivo api.js
+
+export const createBudget = async (budgetData) => {
+  try {
+    const response = await api.post('/budgets/', budgetData);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to create budget');
+  }
+};
+
+
+
+export const createCategory = async (categoryData) => {
+  try {
+    const response = await api.post('/categories/', categoryData);
+    console.log('Category created:', response.data);  // Log para depuración
+    return response.data;
+  } catch (error) {
+    console.error('Error creating category:', error);
+    throw error;
+  }
+};
+
+export const createCategoryGroup = async (groupData) => {
+  try {
+    const response = await api.post('/category-groups/', groupData);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to create category group');
+  }
+};
+
+export const getCategories = async () => {
+  try {
+    const response = await api.get('/categories/');
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to get categories');
+  }
+};
+
+export const getBudgets = async () => {
+  try {
+    const response = await api.get('/budgets/');
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to get budgets');
+  }
+};
+
+export const getReadyToAssign = async () => {
+  try {
+    const response = await api.get('/ready-to-assign/');
+    return response.data.ready_to_assign;
+  } catch (error) {
+    console.error('Error fetching ready to assign amount:', error);
+    handleApiError(error, 'Failed to get ready to assign amount');
+  }
+};
+
+
+export const getCategoryGroups = async () => {
+  try {
+    const response = await api.get('/category-groups/');
+    console.log('Category groups received:', response.data);  // Log para depuración
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching category groups:', error);
+    throw error;
+  }
+};
+
+export const getCategoriesAndGroups = async () => {
+  try {
+    const [categoriesResponse, groupsResponse] = await Promise.all([
+      api.get('/categories/'),
+      api.get('/category-groups/')
+    ]);
+    return {
+      categories: categoriesResponse.data,
+      groups: groupsResponse.data
+    };
+  } catch (error) {
+    handleApiError(error, 'Failed to get categories and groups');
+  }
+};
+
+export const deleteCategory = async (categoryId) => {
+  try {
+    const response = await api.delete(`/categories/${categoryId}`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to delete category');
+  }
+};
+
+export const deleteGroup = async (groupId) => {
+  try {
+    const response = await api.delete(`/category-groups/${groupId}`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to delete group');
+  }
+};
+
+export const updateCategory = async (categoryId, updatedData) => {
+  try {
+    const response = await api.put(`/categories/${categoryId}`, updatedData);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to update category');
+  }
+};
+
+export const updateTransactionCategory = async (transactionId, categoryId) => {
+  try {
+    const response = await api.put(`/transactions/${transactionId}`, { category_id: categoryId });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to update transaction category');
+  }
+};
+
+export const getSpentByCategory = async () => {
+  try {
+    const response = await api.get('/categories/spent');
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to get spent amounts by category');
   }
 };

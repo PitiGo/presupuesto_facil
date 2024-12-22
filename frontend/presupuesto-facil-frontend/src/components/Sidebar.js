@@ -24,7 +24,11 @@ function Sidebar({ isOpen, toggleSidebar }) {
             {isOpen ? 'Transacciones' : 'T'}
           </Link>
         </li>
-        {/* Otros enlaces del sidebar */}
+        <li>
+          <Link to="/budget-management">
+            {isOpen ? 'Gestión de Presupuestos' : 'P'}
+          </Link>
+        </li>
       </ul>
     </nav>
   );

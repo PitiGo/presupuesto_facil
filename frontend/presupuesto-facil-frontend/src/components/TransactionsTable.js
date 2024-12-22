@@ -1,18 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { getUserAccounts, getUserTransactions, updateTransaction } from '../services/api';
+import { getUserAccounts, getUserTransactions, updateTransaction, getCategories } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import './TransactionsTable.css';
 
 const TransactionsTable = () => {
   const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     fetchAllTransactions();
+    fetchCategories();
   }, []);
 
-
+  const fetchCategories = async () => {
+    try {
+      const fetchedCategories = await getCategories();
+      setCategories(fetchedCategories);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  };
 
   const fetchAllTransactions = async () => {
     try {
@@ -49,8 +60,7 @@ const TransactionsTable = () => {
     try {
       await updateTransaction(id, transactionToUpdate);
       setEditingId(null);
-      // Opcionalmente, podrías volver a cargar las transacciones aquí
-      // fetchAllTransactions();
+      fetchAllTransactions(); // Refetch to ensure we have the latest data
     } catch (err) {
       console.error('Error updating transaction:', err);
       setError('No se pudo actualizar la transacción. Por favor, inténtelo de nuevo.');
@@ -77,6 +87,7 @@ const TransactionsTable = () => {
             <th>Moneda</th>
             <th>Fecha</th>
             <th>Cuenta</th>
+            <th>Categoría</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -105,6 +116,22 @@ const TransactionsTable = () => {
               <td>{transaction.currency}</td>
               <td>{new Date(transaction.timestamp).toLocaleString()}</td>
               <td>{transaction.account_name}</td>
+              <td>
+                {editingId === transaction.transaction_id ? 
+                  <select
+                    value={transaction.category_id || ''}
+                    onChange={(e) => handleChange(transaction.transaction_id, 'category_id', e.target.value)}
+                  >
+                    <option value="">Sin categoría</option>
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select> :
+                  categories.find(c => c.id === transaction.category_id)?.name || 'Sin categoría'
+                }
+              </td>
               <td>
                 {editingId === transaction.transaction_id ? 
                   <button onClick={() => handleSave(transaction.transaction_id)}>Guardar</button> :

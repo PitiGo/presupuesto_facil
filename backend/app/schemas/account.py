@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from datetime import datetime
 
 class AccountBase(BaseModel):
     account_id: str
@@ -14,6 +14,8 @@ class AccountCreate(AccountBase):
 
 class Account(AccountBase):
     id: int
+    user_id: str
+    created_at: datetime
 
     class Config:
-        from_attributes = True  # Esta es la nueva forma de configurar orm_mode en Pydantic v2
+        from_attributes = True

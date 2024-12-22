@@ -18,7 +18,7 @@ This project is still in development.
 
 ### Dashboard Overview
 ![Application Accounts](./screenshots/accounts.png)
-*Main dashboard showing budget categories, spending analysis, and account balances*
+*Accounts Section*
 
 ### Transactions Overview
 ![Application Transactions](./screenshots/transactions.png)

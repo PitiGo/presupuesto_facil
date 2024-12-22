@@ -17,8 +17,12 @@ This project is still in development.
 *Secure bank account connection through TrueLayer's interface*
 
 ### Dashboard Overview
-![Application Dashboard](./screenshots/dashboard.png)
+![Application Accounts](./screenshots/accounts.png)
 *Main dashboard showing budget categories, spending analysis, and account balances*
+
+### Transactions Overview
+![Application Transactions](./screenshots/transactions.png)
+*Transactions section*
 
 ## ✨ Features
 

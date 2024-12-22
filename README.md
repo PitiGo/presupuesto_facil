@@ -2,7 +2,23 @@
 
 A modern web application for personal budget management with real-time banking integration. Inspired by YNAB (You Need A Budget), it allows users to connect their bank accounts and effectively manage their budget through an intuitive interface.
 
-(This project is still in development)
+This project is still in development.
+   
+         Authentication [v], 
+         Test data from TrueLayer [v] .
+         Basic business Logic [V]
+         Test with real data from Truelayer [X]
+         Complex business Logic [X]
+
+## 📸 Screenshots
+
+### Banking Connection with TrueLayer
+![TrueLayer Connection Process](./screenshots/truelayer-connect.png)
+*Secure bank account connection through TrueLayer's interface*
+
+### Dashboard Overview
+![Application Dashboard](./screenshots/dashboard.png)
+*Main dashboard showing budget categories, spending analysis, and account balances*
 
 ## ✨ Features
 
